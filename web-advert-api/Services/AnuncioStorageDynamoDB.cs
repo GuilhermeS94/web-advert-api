@@ -5,6 +5,7 @@ using AutoMapper;
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
 using System.Collections.Generic;
+using Amazon.DynamoDBv2.Model;
 
 namespace web_advert_api.Services
 {
@@ -33,6 +34,16 @@ namespace web_advert_api.Services
             }
 
             return dbModel.Id;
+        }
+
+        public async Task<bool> Checkhealth()
+        {
+            using (AmazonDynamoDBClient client = new AmazonDynamoDBClient())
+            {
+                DescribeTableResponse checkTabela = await client.DescribeTableAsync("Anuncios");
+
+                return string.Compare(checkTabela.Table.TableStatus, "active", true) == 0;
+            }
         }
 
         public async Task Corfirmar(ConfirmarAnuncio confirmar)

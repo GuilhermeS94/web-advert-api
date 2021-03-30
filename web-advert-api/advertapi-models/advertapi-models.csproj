@@ -3,6 +3,12 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <RootNamespace>advertapi_models</RootNamespace>
+    <Authors>Guilherme Silva</Authors>
+    <Owners>Guilherme Silva</Owners>
+    <PackageProjectUrl>https://github.com/GuilhermeS94/web-advert-api</PackageProjectUrl>
+    <Title>Anuncios API Microservicos</Title>
+    <Description>Anuncios API Microservicos, curso Udemy</Description>
+    <PackageId>GuilhermeS94.AnunciosApi.Models</PackageId>
   </PropertyGroup>
 
   <PropertyGroup>
