@@ -9,5 +9,6 @@ namespace web_advert_api.Services
         Task<string> Adicionar(AdvertModel anuncio);
         Task Corfirmar(ConfirmarAnuncio confirmar);
         Task<bool> Checkhealth();
+        Task<AnuncioDBModel> GetById(string id);
     }
 }

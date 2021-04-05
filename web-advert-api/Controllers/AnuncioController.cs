@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using advertapi_models;
+using advertapi_models.Mensagens;
+using Amazon.SimpleNotificationService;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using web_advert_api.Services;
 
-// For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace web_advert_api.Controllers
 {
@@ -15,10 +18,12 @@ namespace web_advert_api.Controllers
     public class AnuncioController : ControllerBase
     {
         private readonly IAnuncioStorage _storage;
+        private readonly IConfiguration _configs;
 
-        public AnuncioController(IAnuncioStorage storage)
+        public AnuncioController(IAnuncioStorage storage, IConfiguration configs)
         {
             _storage = storage;
+            _configs = configs;
         }
 
         [HttpPost]
@@ -54,6 +59,7 @@ namespace web_advert_api.Controllers
             try
             {
                 await _storage.Corfirmar(anuncio);
+                await DispararMensagemConfirmar(anuncio);
 
             }
             catch (KeyNotFoundException knfex)
@@ -66,6 +72,21 @@ namespace web_advert_api.Controllers
             }
 
             return new OkResult();
+        }
+
+        private async Task DispararMensagemConfirmar(ConfirmarAnuncio anuncio)
+        {
+            AnuncioDBModel anuncioCompleto = await _storage.GetById(anuncio.Id);
+            using (AmazonSimpleNotificationServiceClient snsClient = new AmazonSimpleNotificationServiceClient())
+            {
+                AnuncioConfirmado msgObj = new AnuncioConfirmado
+                {
+                    Id = anuncio.Id,
+                    Titulo = anuncioCompleto.Titulo
+                };
+                string msgJson = JsonSerializer.Serialize(msgObj);
+                await snsClient.PublishAsync(_configs.GetValue<string>("MensageriaId"), msgJson);
+            }
         }
     }
 }

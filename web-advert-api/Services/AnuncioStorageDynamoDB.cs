@@ -70,5 +70,22 @@ namespace web_advert_api.Services
                 }
             }
         }
+
+        public async Task<AnuncioDBModel> GetById(string id)
+        {
+            using (AmazonDynamoDBClient client = new AmazonDynamoDBClient())
+            {
+                using (DynamoDBContext ctx = new DynamoDBContext(client))
+                {
+                    AnuncioDBModel registro = await ctx.LoadAsync<AnuncioDBModel>(id);
+                    if (registro == null)
+                    {
+                        throw new KeyNotFoundException($"O registro ID: {id} nao foi encontrado.");
+                    }
+
+                    return registro;
+                }
+            }
+        }
     }
 }
