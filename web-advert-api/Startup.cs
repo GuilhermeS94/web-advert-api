@@ -13,6 +13,7 @@ using Microsoft.Extensions.Logging;
 using AutoMapper;
 using web_advert_api.Services;
 using web_advert_api.HelthChecks;
+using Microsoft.OpenApi.Models;
 
 namespace web_advert_api
 {
@@ -33,6 +34,14 @@ namespace web_advert_api
             services.AddTransient<StorageHealthCheck>();
             services.AddControllers();
             services.AddHealthChecks().AddCheck<StorageHealthCheck>("Storage");
+
+            services.AddSwaggerGen(options => {
+                options.SwaggerDoc(name: "v1", new OpenApiInfo
+                {
+                    Title = "Web Anuncio API",
+                    Version = "1"
+                });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -50,6 +59,11 @@ namespace web_advert_api
             app.UseRouting();
 
             app.UseAuthorization();
+
+            app.UseSwagger();
+            app.UseSwaggerUI(opt => {
+                opt.SwaggerEndpoint("/swagger/v1/swagger.json", "Web Anuncio API");
+            });
 
             app.UseEndpoints(endpoints =>
             {
